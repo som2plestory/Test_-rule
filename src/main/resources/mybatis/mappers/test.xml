@@ -3,47 +3,38 @@
 <!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
 
 <mapper namespace="test">
-	<select id="eval_data" parameterType="Map" resultType="String">
-		SELECT output
-		FROM test_output
-		WHERE custNo = #{custNo}
-		AND cnslNo = #{cnslNo}
-	</select>
 	
-	<select id="eval_data2" parameterType="Map" resultType="Map">
-		SELECT *
-		FROM output
-	</select>
-	
-	<insert id="input_cust" parameterType="Map">
-		<!-- 
-		<selectKey keyProperty="custNo" resultType="int" order="BEFORE">
-			SELECT SEQ_custNo.NEXTVAL FROM DUAL
-		</selectKey>
-		 -->
-		INSERT INTO test_eval VALUES(seq_evalNo.nextval, 1,'N',#{key1}, #{key2}, #{key3}, #{key4}, sysdate)
-	</insert>
-	
-	<insert id="input_vowel" parameterType="Map">
-		INSERT INTO test_eval VALUES(seq_evalNo.nextval, 1, 'Y', #{key1}, #{key2}, #{key3}, #{key4}, sysdate)
-	</insert>
-	
-	<select id="output" parameterType="String" resultType="Map">
-		SELECT * FROM test_add_info WHERE A = #{a}
-	</select>
-
-		
-	<select id="all_tables" resultType="Map">
-		SELECT DISTINCT TABLE_NAME, COLUMN_NAME, DATA_TYPE, DATA_LENGTH, DATA_PRECISION
+	<select id="all_tabs" resultType="Map">
+		SELECT TABLE_NAME, COLUMN_NAME, DATA_TYPE
 		FROM USER_TAB_COLUMNS
 		WHERE TABLE_NAME IN (SELECT TABLE_NAME FROM USER_TABLES)
-		ORDER BY TABLE_NAME
+		ORDER BY TABLE_NAME ASC, COLUMN_ID ASC
 	</select>
 	
-	<select id="all_columns" resultType="Map">
-		SELECT DISTINCT COLUMN_NAME, DATA_TYPE, DATA_LENGTH
+	<select id="all_cols" resultType="Map">
+		SELECT DISTINCT COLUMN_NAME, DATA_TYPE, DATA_LENGTH, DATA_PRECISION, DATA_SCALE
 		FROM USER_TAB_COLUMNS
 		WHERE TABLE_NAME IN (SELECT TABLE_NAME FROM USER_TABLES)
 	</select>
+	
+	
+	<insert id="insert_data" parameterType="Set">
+		<foreach collection="table_rows" item="row" separator=" " open="INSERT ALL" close="SELECT * FROM DUAL">
+			INSERT INTO #{row.table_name}
+			<foreach collection="row.columns" item="column" separator="," open="(" close=")">
+				#{column}
+			</foreach>
+			<foreach collection="row.values" item="value" separator="," open="VALUES(" close=")">
+				<!-- <choose>
+					<when test="value==null || value==''">
+						' '
+					</when>
+					<otherwise>-->
+						#{value}
+				<!-- </otherwise>
+				</choose> -->
+			</foreach>
+		</foreach>
+	</insert>
 	
 </mapper>

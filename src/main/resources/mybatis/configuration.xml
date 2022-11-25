@@ -5,6 +5,7 @@
 	
 	<typeAliases>
 		<typeAlias alias="Map" type="java.util.Map"/>
+		<typeAlias alias="set" type="java.util.Set"/>
 	</typeAliases>
 	
 	<mappers>

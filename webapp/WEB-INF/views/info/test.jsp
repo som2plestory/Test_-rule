@@ -11,18 +11,21 @@
 <body>
 <div>
 	<c:choose>
-		<c:when test="${allTables == null || allColumns == null}">
-			<a href="${pageContext.request.contextPath}/this/tableInfo"><button id="tableInfo" type="button">테이블정보불러오기</button></a>
+		<c:when test="${all_tabs == null || all_cols == null}">
+			<a href="${pageContext.request.contextPath}/test/tableInfo"><button id="tableInfo" type="button">테이블정보불러오기</button></a>
 		</c:when>
-		<c:otherwise>HttpSession < 테이블 정보 있음</c:otherwise>
+		<c:otherwise>HttpSession < 테이블 정보 저장 완료</c:otherwise>
 	</c:choose>
 </div>
 <br><br>
 
+<!-- 
 <div>
 	<button id="validation" type="button">유효성검사</button>
 </div>
 <br><br>
+ -->
+ 
 <div id="input-form">
 	<div>
 		<label for="number">입력라인수</label>
@@ -140,7 +143,7 @@ $("#input-button").on("click", function(){
 	console.log("inputMap: "+inputMap)
 	
 	$.ajax({
-		url : "${pageContext.request.contextPath}/Msg/input",
+		url : "${pageContext.request.contextPath}/test/data_input",
 		type : "post",
 		contentType : "application/text",
 		data : JSON.stringify(inputMap),
@@ -172,6 +175,7 @@ $("#input-button").on("click", function(){
 
 
 function render_a(appHeader){
+	console.log("result_appHeader: "+appHeader)
 	var str = '<table border="1">'
 	str	+= '	<thead>'
 	str	+= '		<tr>'
@@ -194,6 +198,8 @@ function render_a(appHeader){
 }
 
 function render_b(eval, i){
+	console.log("result_eval("+i+"): "+eval)
+
 	var str = '<br>' 
 	str += '<table border="1">'
 	str += '	<thead>'
@@ -203,10 +209,10 @@ function render_b(eval, i){
 	str += '	</thead>'
 	str += '	<tbody>'
 
-	for(key in eval){
+	for(KEY in eval){
 		str += '	<tr>'
-		str += '		<td>'+key+'</td>'
-		str += '		<td>'+eval[key]+'</td>'
+		str += '		<td>'+KEY+'</td>'
+		str += '		<td>'+eval[KEY]+'</td>'
 		str += '	</tr>'
 	}
 	
@@ -220,33 +226,10 @@ function render_b(eval, i){
 $("#input2-button").on("click", function(){
 	console.log("입력2 버튼 클릭")
 	var appHeader = {
-		 "transactionKey":"2022110317314374668640000"
-		 ,"interfaceId":"IRCNN00001"
-		 ,"reqOrgCode":""
-		 ,"reqSysCode":""
-		 ,"reqSysIp":"asdfasdf"
-		 ,"reqNodeId":""
-		 ,"reqMsgDt":"20221103173144400"
-		 ,"resOrgCode":""
-		 ,"resSysCode":""
-		 ,"resSysIp":""
-		 ,"resNodeId":""
-		 ,"resMsgDt":""
-		 ,"resCode":""
-		 ,"resMsg":""
-		 ,"reqResFlag":""
-		 ,"innExtFlag":""
-		 ,"userNo":"empNO"
-		 ,"brnNo":""
-		 ,"prodCd":""
+		 ,"userNo":"userNO"
 		 ,"custNo":""
 		 ,"cnslNo":""
-		 ,"loanNo":""
-		 ,"carNo":""
-		 ,"vinNo":""
-		 ,"custResiNo":""
 		 ,"traceId":"!!!!!!!!!!!!!!!!!"
-		 ,"macNo":""
 	}
 	
 	var n = $("[name = 'number']").val()
@@ -254,10 +237,10 @@ $("#input2-button").on("click", function(){
 	var eval = []
 	for(var i=0; i<n; i++){
 		var keys = {
-			key1 : $("#data-"+i+" [name = 'key1']").val(),
-			key2 : $("#data-"+i+" [name = 'key2']").val(),
-			key3 : $("#data-"+i+" [name = 'key3']").val(),
-			key4 : $("#data-"+i+" [name = 'key4']").val()
+			KEY1 : $("#data-"+i+" [name = 'key1']").val(),
+			KEY2 : $("#data-"+i+" [name = 'key2']").val(),
+			KEY3 : $("#data-"+i+" [name = 'key3']").val(),
+			KEY4 : $("#data-"+i+" [name = 'key4']").val()
 		}
 		
 		eval.push(keys)
@@ -272,20 +255,18 @@ $("#input2-button").on("click", function(){
 	console.log("inputMap_eval: "+inputMap.eval)
 	
 	$.ajax({
-		//url : "${pageContext.request.contextPath}/Msg/input2",
-		url : "${pageContext.request.contextPath}/this/validation",
+		url : "${pageContext.request.contextPath}/test/data_input",
 		type : "post",
 		contentType : "application/json",
 		data : JSON.stringify(inputMap),
 		dataType : "json",
 		
 		success : function(result){
-			if(result.success=="ok"){
-				console.log("result: "+result)
-				appHeader = result.appHeader
-				eval = result.eval
-				console.log("result_appHeader: "+appHeader)
-				console.log("result_eval: "+eval)
+			if(result.valid){
+				console.log("유효성 검사 결과: TRUE")
+				InputMap = result.InputVo
+				appHeader = InputMap.appHeader
+				eval = InputMap.eval
 				
 				render_a(appHeader)
 				
@@ -294,7 +275,7 @@ $("#input2-button").on("click", function(){
 				}
 				
 			}else{
-				alert(result.success)
+				alert("유효성 검사 결과: FALSE")
 			}
 		}, 
 		
@@ -304,45 +285,6 @@ $("#input2-button").on("click", function(){
 	})
 })
 
-
-/*
-$("#validation").on("click", function(){
-	console.log("유효성검사 버튼 클릭")
-	
-	var n = $("[name = 'number']").val()
-	
-	var eval = []
-	for(var i=0; i<n; i++){
-		var keys = {
-			key1 : $("#data-"+i+" [name = 'key1']").val(),
-			key2 : $("#data-"+i+" [name = 'key2']").val(),
-			key3 : $("#data-"+i+" [name = 'key3']").val(),
-			key4 : $("#data-"+i+" [name = 'key4']").val()
-		}
-		
-		eval.push(keys)
-	}
-	
-	var inputMap = {eval : eval}
-	console.log("inputMap_eval: "+inputMap.eval)
-	
-	$.ajax({
-		url : "${pageContext.request.contextPath}/Msg/validation",
-		type : "post",
-		contentType : "application/json",
-		data : JSON.stringify(inputMap),
-		dataType : "json",
-		
-		success : function(result){
-			console.log("result: "+result)
-		}, 
-		
-		error : function(XHR, status, error) {
-			console.error(status + " : " + error)
-		}
-	})
-})
-*/
 
 </script>
 </html>
