@@ -92,33 +92,10 @@
 $("#input-button").on("click", function(){
 	console.log("입력 버튼 클릭")
 	var appHeader = {
-		 "transactionKey":"2022110317314374668640000"
-		 ,"interfaceId":"IRCNN00001"
-		 ,"reqOrgCode":""
-		 ,"reqSysCode":""
-		 ,"reqSysIp":"asdfasdf"
-		 ,"reqNodeId":""
-		 ,"reqMsgDt":"20221103173144400"
-		 ,"resOrgCode":""
-		 ,"resSysCode":""
-		 ,"resSysIp":""
-		 ,"resNodeId":""
-		 ,"resMsgDt":""
-		 ,"resCode":""
-		 ,"resMsg":""
-		 ,"reqResFlag":""
-		 ,"innExtFlag":""
-		 ,"userNo":"empNO"
-		 ,"brnNo":""
-		 ,"prodCd":""
+		 "userNo":"empNO"
 		 ,"custNo":""
 		 ,"cnslNo":""
-		 ,"loanNo":""
-		 ,"carNo":""
-		 ,"vinNo":""
-		 ,"custResiNo":""
 		 ,"traceId":"!!!!!!!!!!!!!!!!!"
-		 ,"macNo":""
 	}
 	
 	var n = $("[name = 'number']").val()
@@ -226,7 +203,7 @@ function render_b(eval, i){
 $("#input2-button").on("click", function(){
 	console.log("입력2 버튼 클릭")
 	var appHeader = {
-		 ,"userNo":"userNO"
+		 "userNo":"userNO"
 		 ,"custNo":""
 		 ,"cnslNo":""
 		 ,"traceId":"!!!!!!!!!!!!!!!!!"
@@ -267,6 +244,9 @@ $("#input2-button").on("click", function(){
 				InputMap = result.InputVo
 				appHeader = InputMap.appHeader
 				eval = InputMap.eval
+				
+				$("#appHeader").val("")
+				$("#eval").val("")
 				
 				render_a(appHeader)
 				

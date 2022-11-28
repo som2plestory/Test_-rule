@@ -17,23 +17,48 @@
 		WHERE TABLE_NAME IN (SELECT TABLE_NAME FROM USER_TABLES)
 	</select>
 	
-	
-	<insert id="insert_data" parameterType="Set">
-		<foreach collection="table_rows" item="row" separator=" " open="INSERT ALL" close="SELECT * FROM DUAL">
-			INSERT INTO #{row.table_name}
-			<foreach collection="row.columns" item="column" separator="," open="(" close=")">
-				#{column}
+	<!-- mis -->
+	<insert id="insert_data2" parameterType="List">
+		<foreach collection="list" item="row" separator=" " open="INSERT ALL" close="SELECT * FROM DUAL">
+			INTO ${row.table_name}
+			<foreach collection="row.cols" item="col" separator="," open="(" close=") ">
+				${col}
 			</foreach>
-			<foreach collection="row.values" item="value" separator="," open="VALUES(" close=")">
-				<!-- <choose>
+			<foreach collection="row.vals" item="val" separator="," open="VALUES(" close=") ">
+				#{val}
+			</foreach>
+		</foreach>
+	</insert>
+	
+	
+	<insert id="insert_data3" parameterType="List">
+		<foreach collection="list" item="row" separator=" " open="INSERT ALL" close="SELECT * FROM DUAL">
+			INTO ${row.table_name}
+			(${row.cols})
+			VALUES(${row.vals})
+		</foreach>
+	</insert>
+	
+	<insert id="insert_data4" parameterType="Map">
+			INSERT INTO ${row.table_name}
+			(${row.cols})
+			VALUES(${row.vals})
+	</insert>
+	
+	<insert id="insert_data" parameterType="Map">
+		INSERT INTO ${table_name}
+		<foreach collection="cols" item="col" separator="," open="(" close=") ">
+			${col}
+		</foreach>
+		<foreach collection="vals" item="val" separator="," open="VALUES(" close=") ">
+			<choose>
 					<when test="value==null || value==''">
 						' '
 					</when>
-					<otherwise>-->
-						#{value}
-				<!-- </otherwise>
-				</choose> -->
-			</foreach>
+					<otherwise>
+						#{val}
+					</otherwise>
+			</choose>
 		</foreach>
 	</insert>
 	
